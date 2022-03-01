@@ -1,0 +1,101 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "20.22.03.01",
+    "parameters": {
+    },
+    
+    "variables": {
+        "imageTemplateName": "win10AvdmM65ImageTemplate001",
+        "api-version": "2020-02-14",
+        "svclocation": "uksouth",
+        "UserManagedIdentityId": "/subscriptions/<subscriptionId>/resourceGroups/rg-avdcg-production-uksouth-001/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<userManagedIdentityName>"
+    },
+
+
+    "resources": [
+      {
+        "name": "[variables('imageTemplateName')]",
+        "type": "Microsoft.VirtualMachineImages/imageTemplates",
+        "apiVersion": "[variables('api-version')]",
+        "location": "[variables('svclocation')]",
+        "dependsOn": [],
+        "tags": {},
+            "identity": {
+                "type": "UserAssigned",
+                        "userAssignedIdentities": {
+                        "[variables('UserManagedIdentityId')]": {}
+                            
+                    }
+                    },
+        
+        "properties": {
+            "buildTimeoutInMinutes" : 120,
+
+            "vmProfile": 
+                    {
+                    "vmSize": "Standard_D2s_v5",
+                    "osDiskSizeGB": 127
+                    },
+        
+            "source": {
+                "type": "PlatformImage",
+                    "publisher": "MicrosoftWindowsDesktop",
+                    "offer": "office-365",
+                    "sku": "win10-21h2-avd-m365-g2",
+                    "version": "latest"
+            },
+            "customize": [
+
+        
+                    {
+                        "type": "PowerShell",
+                        "name": "OptimizeOS",
+                        "runElevated": true,
+                        "runAsSystem": true,
+                        "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/14_Building_Images_WVD/1_Optimize_OS_for_WVD.ps1"
+                    },
+                    {
+                        "type": "WindowsRestart",
+                        "restartCheckCommand": "write-host 'restarting post Optimizations'",
+                        "restartTimeout": "5m"
+                    },
+                    {
+                        "type": "PowerShell",
+                        "name": "installFsLogix",
+                        "runElevated": true,
+                        "runAsSystem": true,
+                        "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/14_Building_Images_WVD/0_installConfFsLogix.ps1"
+                    },
+                    {
+                        "type": "WindowsUpdate",
+                        "searchCriteria": "IsInstalled=0",
+                        "filters": [
+                            "exclude:$_.Title -like '*Preview*'",
+                            "include:$true"
+                                    ],
+                        "updateLimit": 40
+                    }
+
+            ],
+            "distribute": 
+            [
+                {   
+                    "type": "SharedImage",
+                    "galleryImageId": "/subscriptions/<subscriptionId>/resourceGroups/rg-avdcg-production-uksouth-001/providers/Microsoft.Compute/galleries/cgavdproductionuksouth001/images/def-norwaylow-uksouth-001",
+                    "runOutputName": "sigOutput",
+                    "artifactTags": {
+                        "source": "wvd10",
+                        "baseosimg": "windows10"
+                    },
+                    "replicationRegions": [
+                      "uksouth"
+
+                    ]
+                }
+            ]
+            }
+        }
+
+    
+    ]
+}    
