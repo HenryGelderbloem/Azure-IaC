@@ -1,7 +1,7 @@
 Write-Host 'AIB Customisation: Downloading FsLogix'
 New-Item -Path C:\\ -Name fslogix -ItemType Directory -ErrorAction SilentlyContinue
 $LocalPath = 'C:\\fslogix'
-$flogixURL = 'https://raw.githubusercontent.com/DeanCefola/Azure-WVD/master/PowerShell/FSLogixSetup.ps1'
+$flogixURL = 'https://raw.githubusercontent.com/HenryGelderbloem/Azure-IaC/main/AVD/AIB/fsLogixSetup.ps1'
 $FslogixInstaller = 'FSLogixSetup.ps1'
 $outputPath = $LocalPath + '\' + $FslogixInstaller
 Invoke-WebRequest -Uri $flogixURL -OutFile $outputPath
