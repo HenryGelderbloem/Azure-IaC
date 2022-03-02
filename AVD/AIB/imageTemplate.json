@@ -51,7 +51,7 @@
                         "name": "installFsLogix",
                         "runElevated": true,
                         "runAsSystem": true,
-                        "scriptUri": "https://raw.githubusercontent.com/HenryGelderbloem/Azure-IaC/main/AVD/AIB/installFsLogix.ps1"
+                        "scriptUri": "https://raw.githubusercontent.com/HenryGelderbloem/Azure-IaC/main/AVD/AIB/installFsLogix_v2.ps1"
                     },
 
                     {
@@ -83,10 +83,7 @@
                     "type": "SharedImage",
                     "galleryImageId": "/subscriptions/<subscriptionId>/resourceGroups/rg-avdcg-production-uksouth-001/providers/Microsoft.Compute/galleries/cgavdproductionuksouth001/images/def-norwaylow-uksouth-001",
                     "runOutputName": "avdWind10Gen2GoldenImage",
-                    "artifactTags": {
-                        "source": "wvd10",
-                        "baseosimg": "windows10"
-                    },
+                    "artifactTags": {},
                     "replicationRegions": [
                       "uksouth"
 
