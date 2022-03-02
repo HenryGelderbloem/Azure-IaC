@@ -1,4 +1,6 @@
 Write-Host 'AIB Customisation: Downloading FsLogix'
+$Policy = Get-ExecutionPolicy -List 
+Write-Host $Policy
 New-Item -Path C:\\ -Name fslogix -ItemType Directory -ErrorAction SilentlyContinue
 $LocalPath = 'C:\\fslogix'
 $flogixURL = 'https://raw.githubusercontent.com/HenryGelderbloem/Azure-IaC/main/AVD/AIB/fsLogixSetup.ps1'
@@ -15,8 +17,6 @@ Expand-Archive $LocalPath\$installerFile -DestinationPath $LocalPath
 Write-Host 'AIB Customisation: Download Fslogix installer finished'
 
 Write-Host 'AIB Customisation: Start Fslogix installer'
-$Policy = Get-ExecutionPolicy -List 
-Write-Host $Policy
 Set-ExecutionPolicy -Scope:CurrentUser -ExecutionPolicy:Unrestricted
 .\\FSLogixSetup.ps1 
 Write-Host 'AIB Customisation: Finished Fslogix installer' 
