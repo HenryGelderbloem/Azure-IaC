@@ -60,6 +60,13 @@
                         "restartTimeout": "15m"
                     },
                     {
+                        "type": "PowerShell",
+                        "name": "installFsLogix",
+                        "runElevated": true,
+                        "runAsSystem": true,
+                        "scriptUri": "https://raw.githubusercontent.com/HenryGelderbloem/Azure-IaC/main/AVD/AIB/installFsLogix.ps1"
+                    },
+                    {
                         "type": "WindowsUpdate",
                         "searchCriteria": "IsInstalled=0",
                         "filters": [
@@ -75,7 +82,7 @@
                 {   
                     "type": "SharedImage",
                     "galleryImageId": "/subscriptions/<subscriptionId>/resourceGroups/rg-avdcg-production-uksouth-001/providers/Microsoft.Compute/galleries/cgavdproductionuksouth001/images/def-norwaylow-uksouth-001",
-                    "runOutputName": "avdWin10Image",
+                    "runOutputName": "avdWind10Gen2GoldenImage",
                     "artifactTags": {
                         "source": "wvd10",
                         "baseosimg": "windows10"

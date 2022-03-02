@@ -15,6 +15,6 @@ Expand-Archive $LocalPath\$installerFile -DestinationPath $LocalPath
 Write-Host 'AIB Customisation: Download Fslogix installer finished'
 
 Write-Host 'AIB Customisation: Start Fslogix installer'
-Set-ExecutionPolicy -Scope:Process -ExecutionPolicy:Unrestricted
+#Set-ExecutionPolicy -Scope:Process -ExecutionPolicy:Unrestricted
 .\\FSLogixSetup.ps1 
 Write-Host 'AIB Customisation: Finished Fslogix installer' 
