@@ -13,7 +13,6 @@ Expand-Archive $outputPath -DestinationPath $LocalPath -Verbose
 Write-Host 'AIB Customisation: Downloading of Optimisations Scripts finished'
 
 Write-Host 'AIB Customisation: Starting OS Optimisation Script'
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Verbose
 Set-Location -Path $LocalPath\Virtual-Desktop-Optimization-Tool-master
 $osOptURL = 'https://raw.githubusercontent.com/The-Virtual-Desktop-Team/Virtual-Desktop-Optimization-Tool/master/Win10_VirtualDesktop_Optimize.ps1'
 $osOptURLexe = 'optimize.ps1'
