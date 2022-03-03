@@ -80,7 +80,21 @@
                     },
                     {
                         "type": "WindowsRestart",
-                        "restartCheckCommand": "write-host 'restarting post Optimizations'",
+                        "restartCheckCommand": "write-host 'Restarting post Optimisations'",
+                        "restartTimeout": "15m"
+                    },
+                    {
+                        "type": "WindowsUpdate",
+                        "searchCriteria": "IsInstalled=0",
+                        "filters": [
+                            "exclude:$_.Title -like '*Preview*'",
+                            "include:$true"
+                                    ],
+                        "updateLimit": 40
+                    },
+                    {
+                        "type": "WindowsRestart",
+                        "restartCheckCommand": "write-host 'Restarting post Windows Update.'",
                         "restartTimeout": "15m"
                     },
                     {
@@ -92,7 +106,6 @@
                                     ],
                         "updateLimit": 40
                     }
-
             ],
             "distribute": 
             [
