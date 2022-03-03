@@ -19,7 +19,7 @@ Write-Host 'AIB Customisation: Downloaded version number:' $downloadedFsLogixVer
 $installedFsLogixVersion = Get-Item "C:\Program Files\FSLogix\Apps\frx.exe" | Select-Object VersionInfo
 Write-Host 'AIB Customisation: Installed version number:' $installedFSLogixVersion.VersionInfo.FileVersion
 
-if ([version]$downloadedFsLogixVersion -gt [version]$installedFsLogixVersion) {
+if ([version]$downloadedFsLogixVersion.VersionInfo.FileVersion -gt [version]$installedFsLogixVersion.VersionInfo.FileVersion) {
     Write-Host 'AIB Customisation: Downloaded version is greator than that installed. Updating FsLogix.'
     Write-Host 'AIB Customisation: Uninstalling FsLogix'
     Start-Process `
