@@ -1,10 +1,17 @@
 Write-Host 'AIB Customisation: Downloading FsLogix'
 $fsLogixURL="https://aka.ms/fslogix_download"
 $installerFile="fslogix_download.zip"
-New-Item -Path C:\Temp -Name fslogix -ItemType Directory -ErrorAction SilentlyContinue
+New-Item `
+    -Path C:\Temp `
+    -Name fslogix `
+    -ItemType Directory `
+    -ErrorAction SilentlyContinue
 $LocalPath = 'C:\Temp\fslogix'
 (New-Object System.Net.WebClient).DownloadFile("$fsLogixURL","$LocalPath\$installerFile")
-Expand-Archive $LocalPath\$installerFile -DestinationPath $LocalPath -Verbose
+Expand-Archive `
+    -Path $LocalPath\$installerFile `
+    -DestinationPath $LocalPath `
+    -Verbose
 Write-Host 'AIB Customisation: Downloading of FsLogix installer finished'
 
 Write-Host 'AIB Customisation: Comparing FsLogix versions'
