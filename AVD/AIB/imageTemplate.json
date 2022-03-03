@@ -2,13 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "2022.03.01.1238",
     "parameters": {
-        "imageTemplateName": {
-            "type": "string"
-        },
         "userManagedIdentityResourceGroup": {
             "type": "string"
         },
         "userManagedIdentityName": {
+            "type": "string"
+        },
+        "imageTemplateName": {
             "type": "string"
         },
         "galleryImageResourceGroup": {
@@ -19,27 +19,20 @@
         },
         "imageDefName": {
             "type": "string"
-        },
-        "replicationRegions": {
-            "type": "string"
         }
     },
     
     "variables": {
-        "imageTemplateName": "win10AvdmM65ImageTemplate001",
         "api-version": "2020-02-14",
         "location": "[resourceGroup().location]",
         "subscriptionId": "[subscription().subscriptionId]",
-        "userManagedIdentityResourceGroup" : "rg-avd-dev-001",
-        "userManagedIdentityName" : "rg-avd-dev-001",
-        "galleryImageResourceGroup": "rg-avdcg-production-uksouth-001",
-        "userManagedIdentityId": "[concat ('subscriptions/', variables('subscriptionId'), '/resourceGroups/', variables('userManagedIdentityResourceGroup'), '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('userManagedIdentityName'))]"
+        "userManagedIdentityId": "[concat('subscriptions/', variables('subscriptionId'), '/resourceGroups/', parameters('userManagedIdentityResourceGroup'), '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userManagedIdentityName'))]"
     },
 
 
     "resources": [
       {
-        "name": "[variables('imageTemplateName')]",
+        "name": "[parameters('imageTemplateName')]",
         "type": "Microsoft.VirtualMachineImages/imageTemplates",
         "apiVersion": "[variables('api-version')]",
         "location": "[variables('location')]",
@@ -49,8 +42,7 @@
                 "type": "UserAssigned",
                         "userAssignedIdentities": {
                         "[variables('userManagedIdentityId')]": {}
-                            
-                    }
+                        }
                     },
         
         "properties": {
@@ -106,12 +98,11 @@
             [
                 {   
                     "type": "SharedImage",
-                    "galleryImageId": "/subscriptions/<subscriptionId>/resourceGroups/rg-avdcg-production-uksouth-001/providers/Microsoft.Compute/galleries/cgavdproductionuksouth001/images/def-norwaylow-uksouth-001",
+                    "galleryImageId": "[concat('subscriptions/', variables('subscriptionId'), '/resourceGroups/', parameters('galleryImageResourceGroup'), '/providers/Microsoft.Compute/galleries/', parameters('galleryImageName'), '/images/', parameters('imageDefName'))]",
                     "runOutputName": "avdWind10Gen2GoldenImage",
                     "artifactTags": {},
                     "replicationRegions": [
-                      "uksouth"
-
+                        "uksouth"
                     ]
                 }
             ]
