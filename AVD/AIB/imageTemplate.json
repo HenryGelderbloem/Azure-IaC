@@ -1,14 +1,39 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "20.22.03.01",
+    "contentVersion": "2022.03.01.1238",
     "parameters": {
+        "imageTemplateName": {
+            "type": "string"
+        },
+        "userManagedIdentityResourceGroup": {
+            "type": "string"
+        },
+        "userManagedIdentityName": {
+            "type": "string"
+        },
+        "galleryImageResourceGroup": {
+            "type": "string"
+        },
+        "galleryImageName": {
+            "type": "string"
+        },
+        "imageDefName": {
+            "type": "string"
+        },
+        "replicationRegions": {
+            "type": "string"
+        }
     },
     
     "variables": {
         "imageTemplateName": "win10AvdmM65ImageTemplate001",
         "api-version": "2020-02-14",
-        "svclocation": "uksouth",
-        "UserManagedIdentityId": "/subscriptions/<subscriptionId>/resourceGroups/rg-avdcg-production-uksouth-001/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<userManagedIdentityName>"
+        "location": "[resourceGroup().location]",
+        "subscriptionId": "[subscription().subscriptionId]",
+        "userManagedIdentityResourceGroup" : "rg-avd-dev-001",
+        "userManagedIdentityName" : "rg-avd-dev-001",
+        "galleryImageResourceGroup": "rg-avdcg-production-uksouth-001",
+        "userManagedIdentityId": "[concat ('subscriptions/', variables('subscriptionId'), '/resourceGroups/', variables('userManagedIdentityResourceGroup'), '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('userManagedIdentityName'))]"
     },
 
 
@@ -17,13 +42,13 @@
         "name": "[variables('imageTemplateName')]",
         "type": "Microsoft.VirtualMachineImages/imageTemplates",
         "apiVersion": "[variables('api-version')]",
-        "location": "[variables('svclocation')]",
+        "location": "[variables('location')]",
         "dependsOn": [],
         "tags": {},
             "identity": {
                 "type": "UserAssigned",
                         "userAssignedIdentities": {
-                        "[variables('UserManagedIdentityId')]": {}
+                        "[variables('userManagedIdentityId')]": {}
                             
                     }
                     },
@@ -51,7 +76,7 @@
                         "name": "installFsLogix",
                         "runElevated": true,
                         "runAsSystem": true,
-                        "scriptUri": "https://raw.githubusercontent.com/HenryGelderbloem/Azure-IaC/main/AVD/AIB/installFsLogix_v2.ps1"
+                        "scriptUri": "https://raw.githubusercontent.com/HenryGelderbloem/Azure-IaC/main/AVD/AIB/installFsLogix.ps1"
                     },
 
                     {

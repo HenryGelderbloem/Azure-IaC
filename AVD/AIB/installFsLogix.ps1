@@ -1,118 +1,44 @@
 Write-Host 'AIB Customisation: Downloading FsLogix'
-New-Item -Path C:\\ -Name fslogix -ItemType Directory -ErrorAction SilentlyContinue
-$LocalPath = 'C:\\fslogix'
-$flogixURL = 'https://raw.githubusercontent.com/HenryGelderbloem/Azure-IaC/main/AVD/AIB/fsLogixSetup.ps1'
-$FslogixInstaller = 'fsLogixSetup.ps1'
-$outputPath = $LocalPath + '\' + $FslogixInstaller
-Invoke-WebRequest -Uri $flogixURL -OutFile $outputPath
-Set-Location $LocalPath
 
 $fsLogixURL="https://aka.ms/fslogix_download"
 $installerFile="fslogix_download.zip"
 
-Invoke-WebRequest $fsLogixURL -OutFile $LocalPath\$installerFile
+New-Item -Path C:\Temp -Name fslogix -ItemType Directory -ErrorAction SilentlyContinue
+$LocalPath = 'C:\Temp\fslogix'
+
+(New-Object System.Net.WebClient).DownloadFile("$fsLogixURL","$LocalPath\$installerFile")
 Expand-Archive $LocalPath\$installerFile -DestinationPath $LocalPath
-Write-Host 'AIB Customisation: Download Fslogix installer finished'
 
-Write-Host 'AIB Customisation: Start Fslogix installer'
-#Set-ExecutionPolicy -Scope:Process -ExecutionPolicy:Unrestricted
-<#Author       : Henry Gelderbloem
-# Creation Date: 2022-03-01
-# Usage        : Setup FSLogix
+Write-Host 'AIB Customisation: Downloading of FsLogix installer finished'
 
-#********************************************************************************
-# Date                         Version      Changes
-#------------------------------------------------------------------------
-# 2022-03-01                     1.0        Intial Version
-#
-#
-#*********************************************************************************
-#
-#>
+Write-Host 'AIB Customisation: Comparing FsLogix versions'
 
-######################
-#    WVD Variables   #
-######################
-$LocalWVDpath            = "c:\temp\wvd\"
-$FSLogixURI              = 'https://aka.ms/fslogix_download'
-$FSInstaller             = 'FSLogixAppsSetup.zip'
+$downloadedFsLogixVersion = Get-Item $LocalPath\x64\Release\FSLogixAppsSetup.exe | Select-Object VersionInfo
+Write-Host 'AIB Customisation: Downloaded version number:' $downloadedFsLogixVersion.VersionInfo.FileVersion
 
+$installedFsLogixVersion = Get-Item "C:\Program Files\FSLogix\Apps\frx.exe" | Select-Object VersionInfo
+Write-Host 'AIB Customisation: Installed version number:' $installedFSLogixVersion.VersionInfo.FileVersion
 
-####################################
-#    Test/Create Temp Directory    #
-####################################
-if((Test-Path c:\temp) -eq $false) {
-    Add-Content -LiteralPath C:\New-WVDSessionHost.log "Create C:\temp Directory"
-    Write-Host `
-        -ForegroundColor Cyan `
-        -BackgroundColor Black `
-        "Creating temp directory"
-    New-Item -Path c:\temp -ItemType Directory
-}
-else {
-    Add-Content -LiteralPath C:\New-WVDSessionHost.log "C:\temp Already Exists"
-    Write-Host `
-        -ForegroundColor Yellow `
-        -BackgroundColor Black `
-        "temp directory already exists"
-}
-if((Test-Path $LocalWVDpath) -eq $false) {
-    Add-Content -LiteralPath C:\New-WVDSessionHost.log "Create C:\temp\WVD Directory"
-    Write-Host `
-        -ForegroundColor Cyan `
-        -BackgroundColor Black `
-        "creating c:\temp\wvd directory"
-    New-Item -Path $LocalWVDpath -ItemType Directory
-}
-else {
-    Add-Content -LiteralPath C:\New-WVDSessionHost.log "C:\temp\WVD Already Exists"
-    Write-Host `
-        -ForegroundColor Yellow `
-        -BackgroundColor Black `
-        "c:\temp\wvd directory already exists"
-}
-#New-Item -Path c:\ -Name New-WVDSessionHost.log -ItemType File
-Add-Content `
--LiteralPath C:\New-WVDSessionHost.log `
-"
-ProfilePath       = $ProfilePath
-RegistrationToken = $RegistrationToken
-Optimize          = $Optimize
-"
-
-
-#################################
-#    Download WVD Componants    #
-#################################
-Add-Content -LiteralPath C:\New-WVDSessionHost.log "Downloading FSLogix"
-    Invoke-WebRequest -Uri $FSLogixURI -OutFile "$LocalWVDpath$FSInstaller"
-
-
-##############################
-#    Prep for WVD Install    #
-##############################
-Add-Content -LiteralPath C:\New-WVDSessionHost.log "Unzip FSLogix"
-Expand-Archive `
-    -LiteralPath "C:\temp\wvd\$FSInstaller" `
-    -DestinationPath "$LocalWVDpath\FSLogix" `
-    -Force `
-    -Verbose
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-Set-Location $LocalWVDpath 
-Add-Content -LiteralPath C:\New-WVDSessionHost.log "UnZip FXLogix Complete"
-
-
-#########################
-#    FSLogix Install    #
-#########################
-Add-Content -LiteralPath C:\New-WVDSessionHost.log "Installing FSLogix"
-$fslogix_deploy_status = Start-Process `
-    -FilePath "$LocalWVDpath\FSLogix\x64\Release\FSLogixAppsSetup.exe" `
-    -ArgumentList "/install /quiet" `
+if ([version]$downloadedFsLogixVersion.VersionInfo.FileVersion -gt [version]$installedFsLogixVersion.VersionInfo.FileVersion) {
+    Write-Host 'AIB Customisation: Downloaded version is greator than that installed. Updating FsLogix.'
+    Write-Host 'AIB Customisation: Uninstalling FsLogix'
+    Start-Process `
+    -FilePath $LocalPath\x64\Release\FSLogixAppsSetup.exe `
+    -ArgumentList "/uninstall /quiet" `
     -Wait `
     -Passthru
 
-#############
-#    END    #
-#############
-Write-Host 'AIB Customisation: Finished Fslogix installer' 
+    Write-Host 'AIB Customisation: Start Fslogix installer'
+    Start-Process `
+    -FilePath $LocalPath\x64\Release\FSLogixAppsSetup.exe `
+    -ArgumentList "/install /quiet" `
+    -Wait `
+    -Passthru
+} else {
+    Write-Host 'AIB Customisation: Installed version matches the downloaded version. Skipping FsLogix update.'
+}
+
+$installedFsLogixVersion = Get-Item "C:\Program Files\FSLogix\Apps\frx.exe" | Select-Object VersionInfo
+Write-Host 'AIB Customisation: Installed version number is now:' $installedFSLogixVersion.VersionInfo.FileVersion
+
+Write-Host 'AIB Customisation: Finished Fslogix installer'
