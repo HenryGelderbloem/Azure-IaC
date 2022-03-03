@@ -24,11 +24,11 @@ if ([version]$downloadedFsLogixVersion.VersionInfo.FileVersion -gt [version]$ins
     Write-Host 'AIB Customisation: Uninstalling FsLogix'
     Start-Process `
     -FilePath $LocalPath\x64\Release\FSLogixAppsSetup.exe `
-    -ArgumentList "/uninstall /quiet" `
+    -ArgumentList "/uninstall /quiet /norestart" `
     -Wait `
     -Passthru
 
-    Write-Host 'AIB Customisation: Start Fslogix installer'
+    Write-Host 'AIB Customisation: Starting Fslogix installer'
     Start-Process `
     -FilePath $LocalPath\x64\Release\FSLogixAppsSetup.exe `
     -ArgumentList "/install /quiet" `
