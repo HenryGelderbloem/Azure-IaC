@@ -23,10 +23,14 @@
     },
     
     "variables": {
-        "api-version": "2020-02-14",
+        "api-version": "2021-10-01",
         "location": "[resourceGroup().location]",
         "subscriptionId": "[subscription().subscriptionId]",
-        "userManagedIdentityId": "[concat('subscriptions/', variables('subscriptionId'), '/resourceGroups/', parameters('userManagedIdentityResourceGroup'), '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userManagedIdentityName'))]"
+        "userManagedIdentityId": "[concat('subscriptions/', variables('subscriptionId'), '/resourceGroups/', parameters('userManagedIdentityResourceGroup'), '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userManagedIdentityName'))]",
+        "currentYear": "[utcNow('yyyy')]",
+        "currentMonth": "[utcNow('mm')]",
+        "curretnDate": "[utcNow('dd')]",
+        "imageDefVersionNumber": "[concat(variables('currentYear'),'.', variables('currentMonth'), '.', variables('curretnDate'))]"
     },
 
 
@@ -70,7 +74,6 @@
                         "runAsSystem": true,
                         "scriptUri": "https://raw.githubusercontent.com/HenryGelderbloem/Azure-IaC/main/AVD/AIB/installFsLogix.ps1"
                     },
-
                     {
                         "type": "PowerShell",
                         "name": "OptimizeOS",
@@ -111,11 +114,11 @@
             [
                 {   
                     "type": "SharedImage",
-                    "galleryImageId": "[concat('subscriptions/', variables('subscriptionId'), '/resourceGroups/', parameters('galleryImageResourceGroup'), '/providers/Microsoft.Compute/galleries/', parameters('galleryImageName'), '/images/', parameters('imageDefName'))]",
+                    "galleryImageId": "[concat('subscriptions/', variables('subscriptionId'), '/resourceGroups/', parameters('galleryImageResourceGroup'), '/providers/Microsoft.Compute/galleries/', parameters('galleryImageName'), '/images/', parameters('imageDefName'), variables('imageDefVersionNumber'))]",
                     "runOutputName": "avdWind10Gen2GoldenImage",
                     "artifactTags": {},
                     "replicationRegions": [
-                        "uksouth"
+                        "[variables('location')]"
                     ]
                 }
             ]
